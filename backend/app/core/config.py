@@ -1,6 +1,7 @@
-import os
+
 from functools import lru_cache
 from typing import List, Optional, Union
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -44,7 +45,7 @@ class Settings(BaseSettings):
 
     # Audio limitations
     MAX_AUDIO_DURATION_SECONDS: int = 30
-    MAX_AUDIO_FILE_SIZE_BYTES: int = 10485760  # 10 MB
+    MAX_AUDIO_FILE_SIZE_BYTES: int = 10485760
 
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env"),
@@ -52,20 +53,40 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_url(cls, value: str) -> str:
+        """Use psycopg 3 for PostgreSQL connections."""
+        if isinstance(value, str):
+            if value.startswith("postgres://"):
+                return value.replace(
+                    "postgres://",
+                    "postgresql+psycopg://",
+                    1,
+                )
+
+            if value.startswith("postgresql://"):
+                return value.replace(
+                    "postgresql://",
+                    "postgresql+psycopg://",
+                    1,
+                )
+
+        return value
+
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: Union[List[str], str]) -> List[str]:
         if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
+            return [
+                origin.strip()
+                for origin in value.split(",")
+                if origin.strip()
+            ]
         return value
 
     @property
     def is_gnani_mock_enabled(self) -> bool:
-        """Report the explicitly selected provider mode.
-
-        Real mode without an API key is a configuration error; it must not
-        silently fall back to mock responses.
-        """
         return self.USE_MOCK_GNANI
 
 
