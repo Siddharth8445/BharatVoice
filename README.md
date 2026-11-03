@@ -1,352 +1,210 @@
-# BharatVoice 🇮🇳
-### AI-Powered Voice Commerce for India's Local Kirana Stores
+<div align="center">
 
-<p align="center">
-  <strong>Speak Naturally. Order Easily. Manage Intelligently.</strong>
-</p>
+# BharatVoice
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.13-blue?logo=python" />
-  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi" />
-  <img src="https://img.shields.io/badge/React-Frontend-61DAFB?logo=react" />
-  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql" />
-  <img src="https://img.shields.io/badge/Gnani%20AI-Speech%20Integration-orange" />
-  <img src="https://img.shields.io/badge/Deployment-Render-46E3B7?logo=render" />
-</p>
+### Voice-first commerce for India's local stores
+
+**Turn natural Hindi, Hinglish and English conversations into structured grocery orders.**
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20BharatVoice-145B46?style=for-the-badge)](https://bharatvoice-frontend-wope.onrender.com)
+[![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge)](https://bharatvoice-backend-e3v8.onrender.com)
+
+[**Launch Live Application →**](https://bharatvoice-frontend-wope.onrender.com)
+
+</div>
 
 ---
 
-## 🌐 Live Demo
+## Homepage
 
-| Service | Link |
+![BharatVoice premium dashboard homepage](assets/bharatvoice-homepage.png)
+
+---
+
+## What is BharatVoice?
+
+BharatVoice is a voice-based AI ordering assistant designed for neighbourhood kirana stores and local retailers in India.
+
+A customer can say:
+
+> “भैया, दो किलो आटा और एक लीटर दूध दे देना।”
+
+BharatVoice transcribes the speech, extracts products and quantities, validates them against a catalogue, and creates an order for the shopkeeper to review. An order is never confirmed automatically: the shopkeeper must explicitly approve it.
+
+## Live links
+
+| Resource | Link |
 |---|---|
-| **Live Frontend** | [BharatVoice Web App](YOUR_FRONTEND_RENDER_URL) |
-| **Backend API** | [BharatVoice API](https://bharatvoice-backend-e3v8.onrender.com) |
-| **API Documentation** | [Swagger UI](https://bharatvoice-backend-e3v8.onrender.com/docs) |
-| **GitHub Repository** | [BharatVoice](https://github.com/Siddharth8445/BharatVoice) |
+| Live frontend | https://bharatvoice-frontend-wope.onrender.com |
+| Backend API | https://bharatvoice-backend-e3v8.onrender.com |
+| Swagger API documentation | https://bharatvoice-backend-e3v8.onrender.com/docs |
 
-> Note: The frontend link is a placeholder. Replace `YOUR_FRONTEND_RENDER_URL` with your actual Render Static Site URL.
+> **Hosting note:** The Render free backend may spin down after inactivity, which can delay the first request. The free PostgreSQL database also has a limited lifetime.
 
----
+## Features
 
-## 📌 Overview
+- Voice-based grocery ordering.
+- Hindi, Hinglish and English conversation support.
+- Speech-to-text using Gnani AI Prisma.
+- Catalogue-based product and quantity extraction.
+- Product and unit validation.
+- Clarification handling for unsupported or ambiguous items.
+- Shopkeeper review and explicit order approval.
+- Order editing, confirmation and cancellation.
+- Hindi spoken confirmation using Gnani AI Timbre.
+- Persistent order storage.
+- Dashboard with order totals and status distribution.
 
-BharatVoice is an AI-powered voice commerce platform designed to simplify ordering for India's local kirana stores.
-
-Traditional ordering often requires customers to type product names, quantities, and units manually. BharatVoice makes this process conversational.
-
-Customers can simply speak in Hindi or Hinglish:
-
-**Example:**
-
-"भैया, दो किलो आटा और एक लीटर दूध भेज देना।"
-
-BharatVoice converts the speech into text, identifies products and quantities, validates the order, and presents it to the shopkeeper for review and confirmation.
-
-The platform combines speech recognition, deterministic product parsing, order validation, database persistence, and speech synthesis into one complete workflow.
-
-## 🎯 Problem Statement
-
-Millions of local kirana stores serve customers who are more comfortable communicating in regional languages than typing orders into digital applications.
-
-Existing digital ordering systems can create friction through:
-- Manual product searching.
-- Language barriers.
-- Incorrect product quantities or units.
-- Complicated ordering interfaces.
-- Lack of simple voice-based workflows.
-
-**BharatVoice aims to make digital ordering as natural as speaking to a local shopkeeper.**
-
----
-
-## ✨ Key Features
-
-### 🎙️ Voice-Based Ordering
-- Record customer orders directly through the browser.
-- Supports Hindi and Hinglish speech.
-- Converts recorded audio into a supported WAV format.
-- Integrates Gnani AI Prisma Speech-to-Text.
-
-### 🧠 Intelligent Order Parsing
-- Extracts product names, quantities, and units.
-- Supports Hindi, Hinglish, and English product aliases.
-- Recognizes supported number words.
-- Uses a deterministic product catalogue.
-- Identifies ambiguous or unsupported products.
-
-### 🛡️ Smart Validation and Clarification
-- Validates products against the catalogue.
-- Checks product-specific measurement units.
-- Prevents invalid items from being confirmed.
-- Requests clarification instead of guessing.
-
-### 📦 Order Management
-- Creates draft orders from voice input.
-- Allows shopkeepers to edit order items.
-- Calculates order totals.
-- Supports order confirmation and cancellation.
-- Maintains order history and status.
-
-### 🔊 Hindi Voice Confirmation
-- Integrates Gnani AI Timbre Text-to-Speech.
-- Generates spoken Hindi order confirmations.
-- Returns generated audio for playback.
-
-### 📊 Dashboard
-- Displays order statistics.
-- Shows recent orders.
-- Provides order status visibility.
-- Offers a premium ivory-and-green interface.
-
----
-
-## 🏗️ System Architecture
+## End-to-end workflow
 
 ```mermaid
 flowchart TD
-    A["Customer"] --> B["React Frontend"]
-    B --> C["Voice Recording"]
-    C --> D["Audio Conversion: WebM to WAV"]
-    D --> E["FastAPI Backend"]
-    E --> F["Gnani AI Prisma STT"]
-    F --> G["Hindi / Hinglish Transcript"]
-    G --> H["Product Parser"]
-    H --> I["Catalogue & Unit Validation"]
-    I --> J{"Order Valid?"}
-    J -->|No| K["Clarification Required"]
-    K --> B
-    J -->|Yes| L["Order Review"]
-    L --> M{"Shopkeeper Approval"}
-    M -->|Edit| L
-    M -->|Cancel| N["Cancelled"]
-    M -->|Confirm| O["PostgreSQL Database"]
-    O --> P["Gnani AI Timbre TTS"]
-    P --> Q["Hindi Voice Confirmation"]
-    Q --> B
+    A[Customer speaks an order] --> B[Frontend records audio]
+    B --> C[Audio converted to WAV]
+    C --> D[Gnani AI Prisma STT]
+    D --> E[Hindi / Hinglish transcript]
+    E --> F[Catalogue-based parser]
+    F --> G{Products and units valid?}
+    G -- No --> H[Show clarification]
+    H --> I[Shopkeeper reviews or edits]
+    I --> G
+    G -- Yes --> J[Create order awaiting confirmation]
+    J --> K[Shopkeeper reviews items and total]
+    K --> L{Approve order?}
+    L -- Yes --> M[Save confirmed order]
+    L -- No --> N[Keep pending or cancel]
+    M --> O[Gnani AI Timbre TTS]
+    O --> P[Play spoken confirmation]
 ```
 
-### Architecture Components
+### Typical user journey
 
-| Layer | Responsibility | Technology |
-|---|---|---|
-| Frontend | User interface and voice recording | React, TypeScript |
-| API Layer | Request handling and routing | FastAPI |
-| Speech Recognition | Speech-to-text conversion | Gnani AI Prisma |
-| Order Processing | Product extraction and validation | Python |
-| Data Validation | DTO and schema validation | Pydantic |
-| Persistence | Order and catalogue data | SQLAlchemy, PostgreSQL |
-| Speech Generation | Hindi voice confirmation | Gnani AI Timbre |
-| Deployment | Frontend and backend hosting | Render |
+1. Open **Voice Orders**.
+2. Record the customer's spoken grocery request.
+3. Gnani AI Prisma converts speech into text.
+4. BharatVoice extracts products, quantities and units.
+5. Unsupported units or unclear items are flagged for clarification.
+6. The shopkeeper reviews the items and estimated total.
+7. The shopkeeper confirms or cancels the order.
+8. Gnani AI Timbre generates spoken confirmation audio.
 
----
+## Technology stack
 
-## 🔄 Complete Application Workflow
+| Layer | Technologies |
+|---|---|
+| Frontend | React, TypeScript, Vite, CSS |
+| Backend | Python, FastAPI, Pydantic |
+| Database / ORM | PostgreSQL in production, SQLite locally, SQLAlchemy |
+| Speech-to-text | Gnani AI Prisma |
+| Text-to-speech | Gnani AI Timbre |
+| HTTP client | HTTPX |
+| Testing | Pytest |
+| Deployment | Render Static Site, Web Service and PostgreSQL |
 
-### 1. Customer Speaks
-
-The customer records an order using the microphone.
-
-Example:
-
-"मुझे दो किलो आटा और एक लीटर दूध चाहिए।"
-
-### 2. Audio Processing
-
-The frontend records audio and converts browser-generated WebM audio into mono 16 kHz PCM WAV format for compatibility with the speech recognition API.
-
-### 3. Speech-to-Text
-
-Gnani AI Prisma processes the audio and returns the recognized transcript.
-
-### 4. Product Extraction
-
-The backend parser identifies:
-- Product: Atta
-- Quantity: 2
-- Unit: kg
-- Product: Milk
-- Quantity: 1
-- Unit: litre
-
-### 5. Product and Unit Validation
-
-The system checks whether the products exist in the catalogue and whether their measurement units are supported.
-
-If a customer requests an invalid combination, such as 1 kg of milk, the application requests clarification.
-
-### 6. Order Review
-
-The shopkeeper reviews the extracted items, edits quantities if necessary, and checks the calculated total.
-
-### 7. Order Confirmation
-
-The shopkeeper explicitly confirms or cancels the order.
-
-No order is automatically confirmed.
-
-### 8. Database Persistence
-
-The order and its status are stored in the database.
-
-### 9. Voice Confirmation
-
-Gnani AI Timbre generates a Hindi audio confirmation that can be played through the frontend.
-
----
-
-## 🧰 Technology Stack
-
-**Frontend**
-- React
-- TypeScript
-- Vite
-- Axios
-- CSS
-- Lucide React
-
-**Backend**
-- Python 3.13
-- FastAPI
-- Pydantic
-- SQLAlchemy
-- HTTPX
-
-**AI and Speech**
-- Gnani AI Prisma v3.0 — Speech-to-Text
-- Gnani AI Timbre v2.5 — Text-to-Speech
-
-**Database**
-- SQLite — Local development
-- PostgreSQL — Production deployment
-
-**Deployment and Tools**
-- Render
-- Git and GitHub
-- Swagger / OpenAPI
-- Pytest
-
----
-
-## 📂 Project Structure
+## Architecture
 
 ```text
-BharatVoice/
-│
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   │   └── routes/
-│   │   │       ├── health.py
-│   │   │       ├── orders.py
-│   │   │       └── speech.py
-│   │   │
-│   │   ├── core/
-│   │   │   └── config.py
-│   │   │
-│   │   ├── db/
-│   │   │   └── session.py
-│   │   │
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   ├── services/
-│   │   │   ├── order_service.py
-│   │   │   ├── speech_to_text.py
-│   │   │   └── text_to_speech.py
-│   │   │
-│   │   └── main.py
-│   │
-│   ├── tests/
-│   ├── requirements.txt
-│   └── migrate_phase8.py
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── api/
-│   │   ├── hooks/
-│   │   └── main.tsx
-│   │
-│   ├── package.json
-│   └── vite.config.ts
-│
-├── .env.example
-├── .gitignore
-├── IMPLEMENTATION_NOTES.md
-└── README.md
+React + TypeScript Frontend
+          │ REST API
+          ▼
+       FastAPI
+          │
+   ┌──────┼──────────┐
+   ▼      ▼          ▼
+ Prisma  Order     Timbre
+  STT    Parser     TTS
+          │
+          ▼
+    SQLAlchemy ORM
+          │
+     PostgreSQL
 ```
 
----
+## Order lifecycle
 
-## ⚙️ Local Installation and Setup
+- `draft` — order is being prepared.
+- `needs_clarification` — an item or unit needs attention.
+- `awaiting_confirmation` — ready for shopkeeper approval.
+- `confirmed` — explicitly approved by the shopkeeper.
+- `cancelled` — cancelled order.
+
+## API overview
+
+See the live [Swagger documentation](https://bharatvoice-backend-e3v8.onrender.com/docs) for current schemas and examples.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/orders` | List saved orders |
+| `POST` | `/api/orders/parse` | Parse text without saving an order |
+| `POST` | `/api/transcribe` | Transcribe uploaded audio |
+| `POST` | `/api/orders/voice` | Create an order from voice input |
+| `GET` | `/api/orders/{order_id}` | Retrieve an order |
+| `PATCH` | `/api/orders/{order_id}` | Update order items |
+| `POST` | `/api/orders/{order_id}/confirm` | Confirm an order |
+| `POST` | `/api/orders/{order_id}/cancel` | Cancel an order |
+| `POST` | `/api/orders/{order_id}/speak-confirmation` | Generate spoken confirmation |
+
+## Run locally
 
 ### Prerequisites
 
 - Python 3.13+
 - Node.js and npm
 - Git
-- Gnani AI API credentials
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Siddharth8445/BharatVoice.git
 cd BharatVoice
 ```
 
-### 2. Backend Setup
+### 2. Set up the backend
 
 ```powershell
 cd backend
-
 python -m venv .venv
-
 .venv\Scripts\Activate.ps1
-
 pip install -r requirements.txt
 ```
 
-Create your backend `.env` file and configure the required variables:
+Create `backend/.env` using `.env.example` as a reference. Example local settings:
 
 ```env
 ENVIRONMENT=development
 DATABASE_URL=sqlite:///./bharatvoice.db
-
-GNANI_API_KEY=your_gnani_api_key
-
-USE_MOCK_GNANI=false
+USE_MOCK_GNANI=true
+GNANI_API_KEY=
+CORS_ORIGINS=http://localhost:5173
 ```
 
-Keep your real API credentials private. Never commit `.env` to GitHub.
+Add your own Gnani AI credentials if testing live speech services. Never commit `.env` or expose API keys.
 
-Start the backend:
+Run the backend:
 
 ```bash
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Backend: `http://localhost:8000`
+Backend: `http://localhost:8000`  
+API docs: `http://localhost:8000/docs`
 
-API documentation: `http://localhost:8000/docs`
+### 3. Set up the frontend
 
-### 3. Frontend Setup
+Open a second terminal:
 
-Open another terminal:
-
-```powershell
+```bash
 cd frontend
-
 npm install
 ```
 
-Create a frontend `.env` file:
+Create `frontend/.env.local`:
 
 ```env
-VITE_API_BASE_URL=http://localhost:8000/api
+VITE_API_BASE_URL=http://localhost:8000
 ```
 
-Start the frontend:
+Run the frontend:
 
 ```bash
 npm run dev
@@ -354,123 +212,69 @@ npm run dev
 
 Frontend: `http://localhost:5173`
 
----
+> Variables prefixed with `VITE_` are exposed to the browser. Never put API keys or other secrets in frontend environment variables.
 
-## 🚀 Production Deployment
+## Testing
 
-BharatVoice is deployed using Render.
-
-| Component | Hosting |
-|---|---|
-| Frontend | Render Static Site |
-| Backend | Render Web Service |
-| Production Database | Render PostgreSQL |
-| Speech APIs | Gnani AI |
-
-### Deployment Configuration
-
-**Frontend**
-- Root directory: `frontend`
-- Build command: `npm install && npm run build`
-- Publish directory: `dist`
-- Environment variable: `VITE_API_BASE_URL`
-
-**Backend**
-- Root directory: `backend`
-- Build command: `pip install -r requirements.txt`
-- Start command:
+From the `backend` directory, with the virtual environment activated:
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
-```
-
-**Backend environment variables**
-- `DATABASE_URL`
-- `GNANI_API_KEY`
-- `USE_MOCK_GNANI=false`
-- `ENVIRONMENT=production`
-- `CORS_ORIGINS`
-
----
-
-## 🧪 Testing
-
-The backend includes automated tests covering the core application functionality.
-
-Run the test suite:
-
-```bash
-cd backend
-
 pytest -v
 ```
 
-**Latest locally verified test result:**
-- 60 tests passed.
-- 4 warnings.
-- No test failures.
+Build the frontend:
 
-The end-to-end validation also covered:
-- Live Hindi speech transcription.
-- Product extraction.
-- Invalid unit detection.
-- Clarification and correction.
-- Order confirmation.
-- Order cancellation.
-- Database persistence.
-- Hindi audio generation.
+```bash
+cd frontend
+npm run build
+```
 
----
+The backend test suite passed **60 tests** during development.
 
-## 🔐 Security and Reliability
+## Deployment
 
-- API credentials are stored in environment variables.
-- `.env` files are excluded from version control.
-- Product and unit validation occurs before confirmation.
-- Ambiguous orders require shopkeeper review.
-- Orders are not automatically dispatched or confirmed.
-- Audio uploads have duration and file-size limits.
-- Database connections use SQLAlchemy.
+BharatVoice is deployed on Render:
 
----
+- **Frontend:** Render Static Site built from `frontend/`.
+- **Backend:** Render Web Service built from `backend/`.
+- **Database:** Render PostgreSQL.
+- **AI speech services:** Gnani AI credentials configured as backend environment secrets.
 
-## 🛣️ Future Improvements
+The frontend uses `VITE_API_BASE_URL` to reach the deployed backend. Production secrets and database connection strings are configured in Render and must not be committed to Git.
 
-- Support for additional Indian regional languages.
-- More advanced catalogue management.
-- Customer and shopkeeper authentication.
-- Multi-store support.
-- WhatsApp ordering integration.
-- Analytics for shopkeepers.
-- Improved speech recognition in noisy environments.
-- Inventory and stock management.
+## Security and design principles
 
----
+- Keep Gnani AI API credentials on the backend.
+- Do not commit `.env`, database URLs or secrets.
+- Restrict production CORS to the deployed frontend origin.
+- Require shopkeeper approval before an order becomes confirmed.
+- Flag uncertain products and unsupported units rather than silently guessing.
 
-## 👨‍💻 Author
+## Project status
 
-**Siddharth Kumar**
+The deployed demonstration has been tested for live speech transcription, product extraction, invalid-unit clarification, order review, confirmation and cancellation, database persistence, and spoken confirmation.
 
+## Future improvements
+
+- Expand regional language and local product-name coverage.
+- Add store-specific catalogues and pricing.
+- Improve mobile-first usability and accessibility.
+- Add production monitoring and persistent database hosting.
+
+## Author
+
+**Siddharth Kumar**  
 B.Tech Computer Science and Engineering — Data Science
 
-J.S.S. Academy of Technical Education, Noida
-
-- GitHub: https://github.com/Siddharth8445
-- LinkedIn: https://www.linkedin.com/in/siddharth-kumar-6a1b55380
+- GitHub: [@Siddharth8445](https://github.com/Siddharth8445)
+- Repository: [BharatVoice](https://github.com/Siddharth8445/BharatVoice)
 
 ---
 
-## 🙌 Acknowledgements
+<div align="center">
 
-- [Gnani AI](https://gnani.ai/) — Speech-to-Text and Text-to-Speech APIs.
-- [FastAPI](https://fastapi.tiangolo.com/) — Backend framework.
-- [React](https://react.dev/) — Frontend library.
-- [Render](https://render.com/) — Cloud deployment.
+**Built to make local commerce more accessible through voice.**
 
----
+[Live Demo](https://bharatvoice-frontend-wope.onrender.com) · [API Docs](https://bharatvoice-backend-e3v8.onrender.com/docs) · [GitHub](https://github.com/Siddharth8445/BharatVoice)
 
-<p align="center">
-  <strong>Built with ❤️ to make voice commerce accessible to every Indian kirana store.</strong>
-  <br />
-  <strong>BharatVoice — भारत की आवाज़, डिजिटल व्यापार के साथ।</strong>
-</p>
+</div>
