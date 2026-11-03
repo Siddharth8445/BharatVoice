@@ -1,257 +1,476 @@
-# BharatVoice (भारतवॉइस)
+# BharatVoice 🇮🇳
+### AI-Powered Voice Commerce for India's Local Kirana Stores
 
-**Indian-Language Voice Intelligence Assistant for Small Grocery Shops (Kirana Stores)**
+<p align="center">
+  <strong>Speak Naturally. Order Easily. Manage Intelligently.</strong>
+</p>
 
-BharatVoice enables kirana storekeepers and grocery shop owners to capture spoken customer orders in Hindi and Hinglish, transcribe them with high accuracy via **Gnani AI Prisma**, parse them deterministically into structured grocery items, review and edit line items, enforce human confirmation, and generate spoken confirmations back in Hindi using **Gnani AI Timbre**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.13-blue?logo=python" />
+  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi" />
+  <img src="https://img.shields.io/badge/React-Frontend-61DAFB?logo=react" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql" />
+  <img src="https://img.shields.io/badge/Gnani%20AI-Speech%20Integration-orange" />
+  <img src="https://img.shields.io/badge/Deployment-Render-46E3B7?logo=render" />
+</p>
 
 ---
 
-## 1. System Architecture
+## 🌐 Live Demo
 
-BharatVoice is built as a clean, decoupled full-stack application:
+| Service | Link |
+|---|---|
+| **Live Frontend** | [BharatVoice Web App](YOUR_FRONTEND_RENDER_URL) |
+| **Backend API** | [BharatVoice API](https://bharatvoice-backend-e3v8.onrender.com) |
+| **API Documentation** | [Swagger UI](https://bharatvoice-backend-e3v8.onrender.com/docs) |
+| **GitHub Repository** | [BharatVoice](https://github.com/Siddharth8445/BharatVoice) |
 
+> Note: The frontend link is a placeholder. Replace `YOUR_FRONTEND_RENDER_URL` with your actual Render Static Site URL.
+
+---
+
+## 📌 Overview
+
+BharatVoice is an AI-powered voice commerce platform designed to simplify ordering for India's local kirana stores.
+
+Traditional ordering often requires customers to type product names, quantities, and units manually. BharatVoice makes this process conversational.
+
+Customers can simply speak in Hindi or Hinglish:
+
+**Example:**
+
+"भैया, दो किलो आटा और एक लीटर दूध भेज देना।"
+
+BharatVoice converts the speech into text, identifies products and quantities, validates the order, and presents it to the shopkeeper for review and confirmation.
+
+The platform combines speech recognition, deterministic product parsing, order validation, database persistence, and speech synthesis into one complete workflow.
+
+## 🎯 Problem Statement
+
+Millions of local kirana stores serve customers who are more comfortable communicating in regional languages than typing orders into digital applications.
+
+Existing digital ordering systems can create friction through:
+- Manual product searching.
+- Language barriers.
+- Incorrect product quantities or units.
+- Complicated ordering interfaces.
+- Lack of simple voice-based workflows.
+
+**BharatVoice aims to make digital ordering as natural as speaking to a local shopkeeper.**
+
+---
+
+## ✨ Key Features
+
+### 🎙️ Voice-Based Ordering
+- Record customer orders directly through the browser.
+- Supports Hindi and Hinglish speech.
+- Converts recorded audio into a supported WAV format.
+- Integrates Gnani AI Prisma Speech-to-Text.
+
+### 🧠 Intelligent Order Parsing
+- Extracts product names, quantities, and units.
+- Supports Hindi, Hinglish, and English product aliases.
+- Recognizes supported number words.
+- Uses a deterministic product catalogue.
+- Identifies ambiguous or unsupported products.
+
+### 🛡️ Smart Validation and Clarification
+- Validates products against the catalogue.
+- Checks product-specific measurement units.
+- Prevents invalid items from being confirmed.
+- Requests clarification instead of guessing.
+
+### 📦 Order Management
+- Creates draft orders from voice input.
+- Allows shopkeepers to edit order items.
+- Calculates order totals.
+- Supports order confirmation and cancellation.
+- Maintains order history and status.
+
+### 🔊 Hindi Voice Confirmation
+- Integrates Gnani AI Timbre Text-to-Speech.
+- Generates spoken Hindi order confirmations.
+- Returns generated audio for playback.
+
+### 📊 Dashboard
+- Displays order statistics.
+- Shows recent orders.
+- Provides order status visibility.
+- Offers a premium ivory-and-green interface.
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TD
+    A["Customer"] --> B["React Frontend"]
+    B --> C["Voice Recording"]
+    C --> D["Audio Conversion: WebM to WAV"]
+    D --> E["FastAPI Backend"]
+    E --> F["Gnani AI Prisma STT"]
+    F --> G["Hindi / Hinglish Transcript"]
+    G --> H["Product Parser"]
+    H --> I["Catalogue & Unit Validation"]
+    I --> J{"Order Valid?"}
+    J -->|No| K["Clarification Required"]
+    K --> B
+    J -->|Yes| L["Order Review"]
+    L --> M{"Shopkeeper Approval"}
+    M -->|Edit| L
+    M -->|Cancel| N["Cancelled"]
+    M -->|Confirm| O["PostgreSQL Database"]
+    O --> P["Gnani AI Timbre TTS"]
+    P --> Q["Hindi Voice Confirmation"]
+    Q --> B
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                       Frontend (SPA)                        │
-│   React 18 + Vite + TypeScript + Tailwind CSS + Lucide      │
-│                                                             │
-│   - Voice Recorder (Web Audio API / MediaRecorder)          │
-│   - Audio File Upload & Validation                          │
-│   - Live Transcript Editor                                  │
-│   - Structured Order Review & Line-Item Editing             │
-│   - Explicit Human Confirmation Modal & Button              │
-│   - Audio Player for Spoken Confirmation                    │
-│   - Metrics & Order History Dashboard                       │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ JSON / REST / Multipart Audio
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      Backend (FastAPI)                      │
-│   Python 3 + FastAPI + Pydantic + SQLAlchemy + SQLite       │
-│                                                             │
-│   - Audio Validation & Upload Handler                       │
-│   - STT Client: Gnani Prisma (v3.0 / indic-auto)            │
-│   - TTS Client: Gnani Timbre (v2.5 / Nalini)                │
-│   - Catalogue-Based Deterministic Order Parser              │
-│   - Human Confirmation State Machine Guard                  │
-│   - SQLite Persistence via SQLAlchemy Models                │
-│   - Development Mock Mode (with explicit headers & flags)   │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-               ┌───────────────┴───────────────┐
-               ▼                               ▼
-┌─────────────────────────────┐ ┌─────────────────────────────┐
-│  Gnani AI STT (Prisma v3)   │ │  Gnani AI TTS (Timbre v2.5) │
-│  https://api.vachana.ai/    │ │  https://api.vachana.ai/    │
-│  stt/v3                     │ │  api/v1/tts/inference       │
-└─────────────────────────────┘ └─────────────────────────────┘
-```
 
----
+### Architecture Components
 
-## 2. Core Workflow & Human Confirmation Policy
-
-1. **Audio Capture**: The shopkeeper speaks an order or uploads an audio clip (up to 30 seconds, max 10MB; WAV, MP3, OGG, FLAC, M4A, WebM).
-2. **Transcription**: The backend invokes Gnani Prisma STT (`POST https://api.vachana.ai/stt/v3`) using header `X-API-Key-ID: <API_KEY>`, `model=prisma-v3.0`, and `language_code=indic-auto`.
-3. **Deterministic Parsing**:
-   - Matches against an extensible Indian grocery catalogue (pulses, grains, dairy, spices, snacks, oils, vegetables).
-   - Resolves Hindi & Hinglish numerals ("do", "dhai", "aadha", "ek", "tin", "paanch", etc.) and digits.
-   - Normalizes metric units (`kg`, `g`, `litre`, `ml`, `packet`, `dozen`, `piece`).
-   - Detects ambiguous quantities (e.g., "thoda namak" -> requests clarification).
-   - Detects unrecognized items and flags them without guessing.
-4. **Order Staging (Pending)**: The parsed order is persisted with `status: "pending"`.
-   > **Critical Rule**: An order is **NEVER** automatically marked confirmed as a side effect of transcription or parsing.
-5. **Review & Human Confirmation**: The shopkeeper inspects the transcription and line items, makes manual corrections if required, and clicks **Confirm Order**.
-6. **Spoken Confirmation**: Upon confirmation, Gnani Timbre TTS (`POST https://api.vachana.ai/api/v1/tts/inference`) synthesizes a polite, Hindi audio receipt (e.g., *"Aapka order confirm ho gaya hai: 2 kilo atta aur 1 litre doodh. Dhanyawad!"*).
-7. **Audio Playback**: The shopkeeper listens to the synthesized audio directly in the browser.
-
----
-
-## 3. Technology Stack
-
-- **Frontend**:
-  - React 18, Vite, TypeScript
-  - Tailwind CSS for responsive typography and layout
-  - React Router for multi-page navigation
-  - Lucide React icons
-  - Native HTML5 Audio & MediaRecorder APIs
-- **Backend**:
-  - Python 3.11+
-  - FastAPI (REST API framework)
-  - Pydantic v2 (DTO validation & schemas)
-  - SQLAlchemy 2.0 (ORM) with SQLite persistence
-  - HTTPX / Requests for outbound API communication
-  - Pytest for automated test suites
-- **AI Services**:
-  - **Speech-to-Text**: Gnani Prisma v3.0 (`https://api.vachana.ai/stt/v3`)
-  - **Text-to-Speech**: Gnani Timbre v2.5 (`https://api.vachana.ai/api/v1/tts/inference`)
-  - **Order Intelligence**: Deterministic rule- and catalogue-based multilingual parser
-
----
-
-## 4. API Specification
-
-| Endpoint | Method | Description |
+| Layer | Responsibility | Technology |
 |---|---|---|
-| `/api/health` | GET | Health status, version, and Gnani API connection mode (Real vs Mock) |
-| `/api/stt/transcribe` | POST | Transcribe uploaded or recorded audio (multipart/form-data) |
-| `/api/orders/parse` | POST | Parse transcript into structured grocery items with clarification flags |
-| `/api/orders` | POST | Create a new pending order |
-| `/api/orders` | GET | List orders with filtering (status, pagination, search) |
-| `/api/orders/{order_id}` | GET | Retrieve a specific order by ID |
-| `/api/orders/{order_id}` | PUT | Update order items or notes |
-| `/api/orders/{order_id}/confirm` | POST | Explicitly confirm an order (triggers TTS audio generation) |
-| `/api/tts/synthesize` | POST | Synthesize custom text into Hindi speech |
-| `/api/dashboard/stats` | GET | Aggregated metrics: total orders, pending, confirmed, revenue estimate |
+| Frontend | User interface and voice recording | React, TypeScript |
+| API Layer | Request handling and routing | FastAPI |
+| Speech Recognition | Speech-to-text conversion | Gnani AI Prisma |
+| Order Processing | Product extraction and validation | Python |
+| Data Validation | DTO and schema validation | Pydantic |
+| Persistence | Order and catalogue data | SQLAlchemy, PostgreSQL |
+| Speech Generation | Hindi voice confirmation | Gnani AI Timbre |
+| Deployment | Frontend and backend hosting | Render |
 
 ---
 
-## 5. Development Phases
+## 🔄 Complete Application Workflow
 
-- **Phase 0**: Project Setup, Architecture Baseline, Documentation & Environment Specification *(Completed)*
-- **Phase 1**: Backend Foundation (FastAPI, SQLite, SQLAlchemy models, Pydantic schemas, Health Check, Configuration) *(Completed)*
-- **Phase 2**: Deterministic Hindi/Hinglish Catalogue & Order Parser with Clarification Logic & Automated Tests *(Completed)*
-- **Phase 3**: Gnani AI Speech Integration (STT Prisma v3.0, TTS Timbre v2.5, Resilient HTTP Clients & Mock Fallbacks) *(Next)*
-- **Phase 4**: Order Lifecycle & Confirmation API (CRUD, Strict Confirmation Guards, Spoken Receipt generation)
-- **Phase 5**: Frontend Foundation (Vite + React + TypeScript + Tailwind CSS, App Layout, Routing, Theme)
-- **Phase 6**: Audio Recording & Transcription UI (Browser Mic Recording, File Upload, Transcript Editing)
-- **Phase 7**: Structured Order Review, Clarification, & Confirmation Flow (Editable Table, Explicit Confirmation Modal, Spoken Audio Player)
-- **Phase 8**: Dashboard Analytics, Order History, Settings & Integration Testing
-- **Phase 9**: Final Verification, Polishing, Automated Test Suite Execution, & Technical Demonstration Readiness
+### 1. Customer Speaks
 
----
+The customer records an order using the microphone.
 
-## 6. Catalogue & Deterministic Order Parser
+Example:
 
-BharatVoice incorporates a zero-hallucination, catalogue-driven NLP extraction engine designed specifically for everyday Kirana grocery interactions.
+"मुझे दो किलो आटा और एक लीटर दूध चाहिए।"
 
-### 6.1 Supported Product Catalogue
-Categories defined in `app/services/catalogue.py`:
-- **Staples**: Atta (गेहूं का आटा), Rice (चावल, बासमती), Maida (मैदा), Suji (सूजी), Besan (बेसन), Eggs (अंडे)
-- **Dairy**: Milk (दूध), Dahi (दही), Paneer (पनीर), Butter (मक्खन), Ghee (देसी घी)
-- **Pulses**: Arhar / Toor Dal (अरहर दाल), Moong Dal (मूंग), Masoor Dal (मसूर), Chana Dal (चना), Rajma (राजमा), Chole (छोले)
-- **Spices**: Salt (नमक), Haldi (हल्दी), Red Chilli Powder (लाल मिर्च), Coriander (धनिया पाउडर), Jeera (जीरा)
-- **Oils**: Mustard Oil (सरसों का तेल), Refined Oil (रिफाइंड तेल), Sunflower Oil (सनफ्लावर तेल)
-- **Household**: Soap (साबुन), Detergent (सर्फ, वाशिंग पाउडर), Dishwash (विम बार, बर्तन का साबुन)
-- **Packaged Goods**: Biscuits (बिस्कुट), Bread (ब्रेड, डबल रोटी), Tea (चाय पत्ती), Sugar (चीनी, शक्कर), Noodles (मैगी)
+### 2. Audio Processing
 
-### 6.2 Supported Quantities & Units
-- **Spoken Numerals**: `ek` (1), `do` (2), `teen` (3), `chaar` (4), `paanch` (5), `chhah` (6), `saat` (7), `aath` (8), `nau` (9), `das` (10), `gyarah` (11), `barah` (12) and their Devanagari equivalents.
-- **Fractions**: `aadha` / `aadhi` (0.5), `sawa` (1.25), `dedh` (1.5), `dhai` (2.5), `paune` (0.75).
-- **Decimals & Integers**: Standard digits (`1`, `2`, `1.5`, `2.5`, `500`).
-- **Units**: Weight (`kg`, `g`), Volume (`litre`, `ml`), Packaging / Count (`packet`, `piece`, `dozen`, `bottle`, `tin`, `tray`).
+The frontend records audio and converts browser-generated WebM audio into mono 16 kHz PCM WAV format for compatibility with the speech recognition API.
 
-### 6.3 Ambiguity & Clarification Policies
-The parser enforces strict Kirana safety rules:
-1. **Missing Quantities**: Phrases like `"atta le aana"` prompt clarification rather than guessing a default.
-2. **Vague Quantities**: Words like `"thoda namak"` or `"kuch biscuit"` trigger explicit clarification.
-3. **Unsupported Products**: Terms absent from the catalogue (e.g., `"seb"`, `"amrood"`) are flagged in `unsupported_products` and hold the order in `needs_clarification`.
-4. **Unit Safety**: Incompatible units (e.g., `"2 litre atta"`) or ambiguous bulk units are flagged for human clarification.
-5. **Purity**: Parsing is a strictly stateless query that **NEVER** modifies the database or confirms an order.
+### 3. Speech-to-Text
 
-### 6.4 API Usage: `POST /api/orders/parse`
+Gnani AI Prisma processes the audio and returns the recognized transcript.
 
-**Request**:
-```json
-{
-  "transcript": "Bhaiya, do kilo atta aur ek litre doodh bhej dena."
-}
-```
+### 4. Product Extraction
 
-**Response (Ready for Review)**:
-```json
-{
-  "items": [
-    {
-      "product_id": "atta",
-      "name": "Atta",
-      "quantity": 2.0,
-      "unit": "kg",
-      "unit_price": 45.0
-    },
-    {
-      "product_id": "milk",
-      "name": "Milk",
-      "quantity": 1.0,
-      "unit": "litre",
-      "unit_price": 33.0
-    }
-  ],
-  "status": "ready_for_review",
-  "clarification_required": false,
-  "clarification_message": null,
-  "unsupported_products": []
-}
-```
+The backend parser identifies:
+- Product: Atta
+- Quantity: 2
+- Unit: kg
+- Product: Milk
+- Quantity: 1
+- Unit: litre
 
-**Response (Needs Clarification)**:
-```json
-{
-  "items": [
-    {
-      "product_id": "atta",
-      "name": "Atta",
-      "quantity": 2.0,
-      "unit": "kg",
-      "unit_price": 45.0
-    }
-  ],
-  "status": "needs_clarification",
-  "clarification_required": true,
-  "clarification_message": "Vague quantity 'thoda' for 'Salt'. Please specify an exact quantity (e.g. 1 kg or 1 packet).",
-  "unsupported_products": []
-}
-```
+### 5. Product and Unit Validation
 
-### 6.5 Known Language Limitations
-- Regional colloquial product aliases not listed in `_PRODUCTS` will be flagged as unsupported rather than guessed.
-- Mathematical operations (e.g., "do kilo atta minus aadha kilo") are outside the grammar; customer must state net quantities.
+The system checks whether the products exist in the catalogue and whether their measurement units are supported.
+
+If a customer requests an invalid combination, such as 1 kg of milk, the application requests clarification.
+
+### 6. Order Review
+
+The shopkeeper reviews the extracted items, edits quantities if necessary, and checks the calculated total.
+
+### 7. Order Confirmation
+
+The shopkeeper explicitly confirms or cancels the order.
+
+No order is automatically confirmed.
+
+### 8. Database Persistence
+
+The order and its status are stored in the database.
+
+### 9. Voice Confirmation
+
+Gnani AI Timbre generates a Hindi audio confirmation that can be played through the frontend.
 
 ---
 
-## 7. Quick Start & Execution Guide (Windows / PowerShell)
+## 🧰 Technology Stack
+
+**Frontend**
+- React
+- TypeScript
+- Vite
+- Axios
+- CSS
+- Lucide React
+
+**Backend**
+- Python 3.13
+- FastAPI
+- Pydantic
+- SQLAlchemy
+- HTTPX
+
+**AI and Speech**
+- Gnani AI Prisma v3.0 — Speech-to-Text
+- Gnani AI Timbre v2.5 — Text-to-Speech
+
+**Database**
+- SQLite — Local development
+- PostgreSQL — Production deployment
+
+**Deployment and Tools**
+- Render
+- Git and GitHub
+- Swagger / OpenAPI
+- Pytest
+
+---
+
+## 📂 Project Structure
+
+```text
+BharatVoice/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── routes/
+│   │   │       ├── health.py
+│   │   │       ├── orders.py
+│   │   │       └── speech.py
+│   │   │
+│   │   ├── core/
+│   │   │   └── config.py
+│   │   │
+│   │   ├── db/
+│   │   │   └── session.py
+│   │   │
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   │   ├── order_service.py
+│   │   │   ├── speech_to_text.py
+│   │   │   └── text_to_speech.py
+│   │   │
+│   │   └── main.py
+│   │
+│   ├── tests/
+│   ├── requirements.txt
+│   └── migrate_phase8.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── api/
+│   │   ├── hooks/
+│   │   └── main.tsx
+│   │
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── .env.example
+├── .gitignore
+├── IMPLEMENTATION_NOTES.md
+└── README.md
+```
+
+---
+
+## ⚙️ Local Installation and Setup
 
 ### Prerequisites
-- Python 3.11+
-- Node.js 18+ (for upcoming frontend phases)
 
-### Backend Setup
+- Python 3.13+
+- Node.js and npm
+- Git
+- Gnani AI API credentials
 
-1. **Navigate to the backend directory**:
-   ```powershell
-   cd c:\Users\Asus\OneDrive\Desktop\Gen-AI\bharatvoice\backend
-   ```
+### 1. Clone the Repository
 
-2. **Create and activate the virtual environment**:
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
+```bash
+git clone https://github.com/Siddharth8445/BharatVoice.git
+cd BharatVoice
+```
 
-3. **Install dependencies**:
-   ```powershell
-   pip install -r requirements.txt
-   ```
+### 2. Backend Setup
 
-4. **Configure environment variables (optional)**:
-   By default, the backend loads settings from `.env.example` placeholders with mock mode enabled (`USE_MOCK_GNANI=true`). To customize, copy `.env.example`:
-   ```powershell
-   cp ..\.env.example .env
-   ```
+```powershell
+cd backend
 
-5. **Run automated test suite**:
-   ```powershell
-   pytest -v
-   ```
+python -m venv .venv
 
-6. **Start the FastAPI backend server**:
-   ```powershell
-   uvicorn app.main:app --reload --port 8000
-   ```
+.venv\Scripts\Activate.ps1
 
-7. **Verify health endpoint**:
-   Open browser or run in PowerShell:
-   ```powershell
-   curl http://localhost:8000/api/health
-   ```
+pip install -r requirements.txt
+```
 
+Create your backend `.env` file and configure the required variables:
+
+```env
+ENVIRONMENT=development
+DATABASE_URL=sqlite:///./bharatvoice.db
+
+GNANI_API_KEY=your_gnani_api_key
+
+USE_MOCK_GNANI=false
+```
+
+Keep your real API credentials private. Never commit `.env` to GitHub.
+
+Start the backend:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+Backend: `http://localhost:8000`
+
+API documentation: `http://localhost:8000/docs`
+
+### 3. Frontend Setup
+
+Open another terminal:
+
+```powershell
+cd frontend
+
+npm install
+```
+
+Create a frontend `.env` file:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+Start the frontend:
+
+```bash
+npm run dev
+```
+
+Frontend: `http://localhost:5173`
+
+---
+
+## 🚀 Production Deployment
+
+BharatVoice is deployed using Render.
+
+| Component | Hosting |
+|---|---|
+| Frontend | Render Static Site |
+| Backend | Render Web Service |
+| Production Database | Render PostgreSQL |
+| Speech APIs | Gnani AI |
+
+### Deployment Configuration
+
+**Frontend**
+- Root directory: `frontend`
+- Build command: `npm install && npm run build`
+- Publish directory: `dist`
+- Environment variable: `VITE_API_BASE_URL`
+
+**Backend**
+- Root directory: `backend`
+- Build command: `pip install -r requirements.txt`
+- Start command:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+**Backend environment variables**
+- `DATABASE_URL`
+- `GNANI_API_KEY`
+- `USE_MOCK_GNANI=false`
+- `ENVIRONMENT=production`
+- `CORS_ORIGINS`
+
+---
+
+## 🧪 Testing
+
+The backend includes automated tests covering the core application functionality.
+
+Run the test suite:
+
+```bash
+cd backend
+
+pytest -v
+```
+
+**Latest locally verified test result:**
+- 60 tests passed.
+- 4 warnings.
+- No test failures.
+
+The end-to-end validation also covered:
+- Live Hindi speech transcription.
+- Product extraction.
+- Invalid unit detection.
+- Clarification and correction.
+- Order confirmation.
+- Order cancellation.
+- Database persistence.
+- Hindi audio generation.
+
+---
+
+## 🔐 Security and Reliability
+
+- API credentials are stored in environment variables.
+- `.env` files are excluded from version control.
+- Product and unit validation occurs before confirmation.
+- Ambiguous orders require shopkeeper review.
+- Orders are not automatically dispatched or confirmed.
+- Audio uploads have duration and file-size limits.
+- Database connections use SQLAlchemy.
+
+---
+
+## 🛣️ Future Improvements
+
+- Support for additional Indian regional languages.
+- More advanced catalogue management.
+- Customer and shopkeeper authentication.
+- Multi-store support.
+- WhatsApp ordering integration.
+- Analytics for shopkeepers.
+- Improved speech recognition in noisy environments.
+- Inventory and stock management.
+
+---
+
+## 👨‍💻 Author
+
+**Siddharth Kumar**
+
+B.Tech Computer Science and Engineering — Data Science
+
+J.S.S. Academy of Technical Education, Noida
+
+- GitHub: https://github.com/Siddharth8445
+- LinkedIn: https://www.linkedin.com/in/siddharth-kumar-6a1b55380
+
+---
+
+## 🙌 Acknowledgements
+
+- [Gnani AI](https://gnani.ai/) — Speech-to-Text and Text-to-Speech APIs.
+- [FastAPI](https://fastapi.tiangolo.com/) — Backend framework.
+- [React](https://react.dev/) — Frontend library.
+- [Render](https://render.com/) — Cloud deployment.
+
+---
+
+<p align="center">
+  <strong>Built with ❤️ to make voice commerce accessible to every Indian kirana store.</strong>
+  <br />
+  <strong>BharatVoice — भारत की आवाज़, डिजिटल व्यापार के साथ।</strong>
+</p>
